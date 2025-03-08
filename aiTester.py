@@ -14,6 +14,6 @@ def caller(prompt) -> None:
     # print(completion.choices[0].message.content)
 
     with open('input.txt', 'w', encoding="utf-8") as file:
-        file.write("\n\n---------Chat Reponse-----------")
+        # file.write("\n\n---------Chat Reponse-----------")
         file.write(str(completion.choices[0].message.content))
-        file.write("\n-----------End of reponse-----------\n")
+        # file.write("\n-----------End of reponse-----------\n")
