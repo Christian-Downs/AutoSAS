@@ -1,8 +1,8 @@
 from Main2 import mainFunc2
-import flask
+from flask import Flask
 
 
-app = flask(__name__)
+app = Flask(__name__)
 
 # This is a sample Python script.
 
@@ -23,6 +23,6 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
-    app.run()
+    app.run(debug=True)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
