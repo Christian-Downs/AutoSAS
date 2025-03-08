@@ -1,4 +1,6 @@
-Install<br>
-<code>
-pip install flask
-</code>
+### Setup
+
+`conda env create -f enviroment.yaml`
+
+### Usage
+
