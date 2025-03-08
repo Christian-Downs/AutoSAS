@@ -1,1 +1,3 @@
-print("Hello world")
+import helper
+
+helper.faulty_function()
