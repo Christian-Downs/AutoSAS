@@ -4,9 +4,8 @@ client = OpenAI()
 
 
 def caller(prompt, system = None):
-    response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
+    messages = [
+
         {
         "role": "user",
         "content": [
@@ -25,7 +24,11 @@ def caller(prompt, system = None):
             }
         ]
         }
-    ],
+    ]
+
+    response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages= messages,
     response_format={
         "type": "text"
     },
