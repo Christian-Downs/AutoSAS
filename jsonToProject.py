@@ -24,21 +24,21 @@ def jsonFromResponse (response) :
     return json
 
 def jsonFromResponse (response) :
-    record = False
+    openBraceCount = 0
 
     json = ""
     for char in response :
         if char == "{" :
-            record = True
+            openBraceCount += 1
         
-        if record == True:
+        if openBraceCount > 0:
             json += char
 
         if char == "}" :
-            record = False
+            openBraceCount -= 1
     
     return json
 
 jsonToProject(" {\"file1\" : \"file1 contents\" , \"file2\" : \"file2 contents\"} ")
 
-print(jsonFromResponse(" {\"file1\" : \"file1 contents\" , \"file2\" : \"file2 contents\"} "))
+print(jsonFromResponse(" {\"file1\" : \"file1 {} contents\" , \"file2\" : \"file2 contents\"} "))
