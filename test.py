@@ -12,6 +12,15 @@ response = client.chat.completions.create(
           "text": "Hello"
         }
       ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Hello! How can I assist you today?"
+        }
+      ]
     }
   ],
   response_format={
@@ -23,5 +32,3 @@ response = client.chat.completions.create(
   frequency_penalty=0,
   presence_penalty=0
 )
-
-print(response.choices[0].message)

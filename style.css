@@ -1,0 +1,49 @@
+
+body {
+    background: linear-gradient(132deg, #000000,#00ff00, #0000ff,#e60073,#ff0000,#ffffff);
+    background-size: 400% 400%;
+    animation: BackgroundGradient 15s ease infinite;
+}
+  
+h1 {
+position: absolute;
+left: 50%;
+top: 50%;
+transform: translateX(-50%) translateY(-50%);
+font-family: Open Sans, sans-serif;
+color: #fff;
+font-weight: 400;
+text-transform: uppercase;
+text-align: center;
+font-size: 2em;
+padding: 5px;
+}
+@keyframes BackgroundGradient {
+0% {background-position: 0% 50%;}
+50% {background-position: 100% 50%;}
+100% {background-position: 0% 50%;}
+}
+
+.main{
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    justify-items: center;
+}
+.chatBoxHolder {
+    display: flex;
+    flex-wrap: nowrap;
+    /* background-color: blue; */
+}
+
+.description{
+    margin-left : 10%;
+    margin-right: 10%;
+    background-color: #d3d3d382;
+
+}
+
+.SubmitButton {
+    margin-left: 1em;
+}
