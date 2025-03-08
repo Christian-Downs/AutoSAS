@@ -9,7 +9,8 @@ def convert_text_to_json(input_text: str) -> str:
     result = {}
     
     # Match the file structure header
-    file_structure_match = re.search(r'File Structure\s*([\s\S]+?)\s*main.py', input_text)
+    file_structure_match = re.search(r'File Structure\s*([\s\S]+?)\s*```', input_text)
+
     if file_structure_match:
         file_structure_raw = file_structure_match.group(1).strip()
         file_structure = {}
@@ -61,3 +62,6 @@ def save_json_to_file(json_data: str, filename: str):
 
 
 
+
+if __name__ == '__main__':
+    convert_text_to_json(open('input.txt', 'r').read())

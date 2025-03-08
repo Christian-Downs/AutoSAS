@@ -1,3 +1,7 @@
 {
-    "file_structure": {}
+    "file_structure": {
+        "\u251c\u2500\u2500": "templates/",
+        "\u2502": "  \u2514\u2500\u2500 employee_list.html",
+        "\u2514\u2500\u2500": "style.css"
+    }
 }

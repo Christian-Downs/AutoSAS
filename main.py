@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from aiTester import caller
 from fileNameParse import convert_text_to_json
-from JsonToProject import jsonToProject
+from jsonToProject import jsonToProject
 
 
 
