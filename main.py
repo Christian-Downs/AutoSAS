@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
-import fileNameParse
-import jsonToProject
+from aiTester import caller
+from fileNameParse import convert_text_to_json
+from JsonToProject import jsonToProject
 
 
 
@@ -17,9 +18,20 @@ def my_form():
 
 @app.route('/', methods=['POST'])
 def my_form_post():
+    # Example Usage:
     text = request.form['text']
-    processed_text = text.upper()
-    return processed_text
+
+    caller(text)
+    file_path = 'input.txt'
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+        file.close()
+    with open("Output.json", "w") as file:
+        json_data = convert_text_to_json(file_content)
+        file.write(json_data)
+    jsonToProject(str(json_data))
+    
+    return "PROCESSED"
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

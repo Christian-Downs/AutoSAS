@@ -51,15 +51,13 @@ def convert_text_to_json(input_text: str) -> str:
 
     # Convert the result dictionary to JSON string
     json_output = json.dumps(result, indent=4)
-
+    save_json_to_file(str(json_output), "Output.json")
     return json_output
 
 def save_json_to_file(json_data: str, filename: str):
     with open(filename, 'w') as f:
         f.write(json_data)
+        f.close()
 
-# Example Usage:
-file_path = 'input.txt'
-with open(file_path, 'r') as file:
-    file_content = file.read()
-print(convert_text_to_json(file_content))
+
+

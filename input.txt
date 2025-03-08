@@ -1,237 +1,168 @@
----------Chat Reponse-----------Here's a simple Flask-based web application that allows you to store and manage employee information. Below is the file structure, the content of each file including `main.py`, and the `README.md`.
 
-### File Structure
+
+---------Chat Reponse-----------Certainly! Below is the file structure, file codes, and a README.md for a Flask application that allows a user to add Pokémon to an SQLite backend.
+
+**File Structure:**
 ```
-employee_manager/
+pokemon_app/
 │
 ├── main.py
 ├── templates/
-│   ├── index.html
-│   ├── add_employee.html
-│   └── employee_list.html
-├── static/
-│   └── styles.css
+│   ├── add_pokemon.html
+│   └── success.html
+└── database.py
 └── README.md
 ```
 
-### main.py
+---
+
+**`main.py`:**
 ```python
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for
+from database import init_db, add_pokemon
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///employees.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = 'your_secret_key'
-db = SQLAlchemy(app)
 
-class Employee(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    position = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False)
+@app.before_first_request
+def setup():
+    init_db()
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('add_pokemon.html')
 
-@app.route('/employees')
-def employee_list():
-    employees = Employee.query.all()
-    return render_template('employee_list.html', employees=employees)
+@app.route('/add', methods=['POST'])
+def add():
+    name = request.form['name']
+    type_ = request.form['type']
+    add_pokemon(name, type_)
+    return redirect(url_for('success', name=name))
 
-@app.route('/add', methods=['GET', 'POST'])
-def add_employee():
-    if request.method == 'POST':
-        name = request.form['name']
-        position = request.form['position']
-        email = request.form['email']
-        
-        new_employee = Employee(name=name, position=position, email=email)
-        db.session.add(new_employee)
-        db.session.commit()
-        flash('Employee added successfully!')
-        return redirect(url_for('employee_list'))
-    return render_template('add_employee.html')
+@app.route('/success')
+def success():
+    name = request.args.get('name')
+    return render_template('success.html', name=name)
 
 if __name__ == '__main__':
-    db.create_all()
     app.run(debug=True)
 ```
 
-### templates/index.html
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Employee Manager</title>
-</head>
-<body>
-    <h1>Welcome to Employee Manager</h1>
-    <a href="{{ url_for('add_employee') }}">Add Employee</a>
-    <a href="{{ url_for('employee_list') }}">View Employees</a>
-</body>
-</html>
+---
+
+**`database.py`:**
+```python
+import sqlite3
+
+def init_db():
+    conn = sqlite3.connect('pokemon.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS pokemon (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            type TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+def add_pokemon(name, type_):
+    conn = sqlite3.connect('pokemon.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO pokemon (name, type) VALUES (?, ?)
+    ''', (name, type_))
+    conn.commit()
+    conn.close()
 ```
 
-### templates/add_employee.html
+---
+
+**`templates/add_pokemon.html`:**
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Add Employee</title>
+    <title>Add Pokemon</title>
 </head>
 <body>
-    <h1>Add Employee</h1>
-    <form action="{{ url_for('add_employee') }}" method="POST">
+    <h1>Add a Pokemon</h1>
+    <form action="/add" method="post">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
-        
-        <label for="position">Position:</label>
-        <input type="text" id="position" name="position" required><br>
-        
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
-        
-        <input type="submit" value="Add Employee">
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="type">Type:</label>
+        <input type="text" id="type" name="type" required><br><br>
+        <input type="submit" value="Add Pokemon">
     </form>
-    <br>
-    <a href="{{ url_for('employee_list') }}">Back to Employee List</a>
 </body>
 </html>
 ```
 
-### templates/employee_list.html
+---
+
+**`templates/success.html`:**
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Employee List</title>
+    <title>Success</title>
 </head>
 <body>
-    <h1>Employee List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for employee in employees %}
-                <tr>
-                    <td>{{ employee.name }}</td>
-                    <td>{{ employee.position }}</td>
-                    <td>{{ employee.email }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <br>
-    <a href="{{ url_for('add_employee') }}">Add New Employee</a>
-    <a href="{{ url_for('index') }}">Home</a>
+    <h1>Success!</h1>
+    <p>You have successfully added a Pokémon: {{ name }}</p>
+    <a href="/">Add another Pokémon</a>
 </body>
 </html>
 ```
 
-### static/styles.css
-```css
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
+---
 
-h1 {
-    color: #333;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-```
-
-### README.md
+**`README.md`:**
 ```markdown
-# Employee Manager
+# Pokémon App
 
-A simple web application to manage employee information using Flask and SQLite.
+A simple Flask application that allows users to add Pokémon to an SQLite backend.
 
 ## File Structure
-
 ```
-employee_manager/
+pokemon_app/
 │
 ├── main.py
 ├── templates/
-│   ├── index.html
-│   ├── add_employee.html
-│   └── employee_list.html
-├── static/
-│   └── styles.css
+│   ├── add_pokemon.html
+│   └── success.html
+└── database.py
 └── README.md
 ```
 
-## Requirements
+## How to Use
 
-- Python 3.x
-- Flask
-- Flask-SQLAlchemy
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository_url>
-   cd employee_manager
+1. Clone or download the repository.
+2. Make sure you have Flask installed. You can install it using pip:
    ```
-
-2. Install the required packages:
-   ```bash
-   pip install Flask Flask-SQLAlchemy
+   pip install Flask
    ```
-
-## Running the Application
-
-1. Run the application:
-   ```bash
+3. Run the application:
+   ```
    python main.py
    ```
+4. Open your web browser and go to `http://127.0.0.1:5000/`.
+5. Fill out the form to add a Pokémon.
 
-2. Open a web browser and go to `http://127.0.0.1:5000`.
+## Database
 
-## Features
+The application uses SQLite and will create a file named `pokemon.db` in the root directory.
 
-- Add employees with name, position, and email.
-- View the list of employees.
+## Templates
 
-## License
+This application contains two HTML templates:
+- `add_pokemon.html`: A form to add Pokémon.
+- `success.html`: A success page that confirms the Pokémon was added.
 
-This project is licensed under the MIT License.
 ```
 
-This setup gives you a basic application to manage employee information with a simple user interface. You can enhance it by adding more features, such as editing and deleting employees.
 -----------End of reponse-----------
