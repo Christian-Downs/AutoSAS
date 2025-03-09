@@ -1,23 +1,34 @@
 from openai import OpenAI
+client = OpenAI()
+def caller(prompt) -> None:
 
-client = OpenAI(
-  api_key=OPENAI_AI_KEY
-)
+    completion = client.chat.completions.create(
+    model="gpt-4o-mini",
+    store=True,
+    messages=[
+        {"role": "user", "content": "create website using python flask main.py using input "
+        + "Give file structure, file code, README.md Dont explain running input or overview:"
+        + prompt}
+    ]
+    )
+    # print(completion.choices[0].message.content)
 
-userInput = "I need a file to store employee info"
-completion = client.chat.completions.create(
-  model="gpt-4o-mini",
-  store=True,
-  messages=[
-    {"role": "user", "content": "create website using python flask main.py using input "
-    + "Give file structure, file code, README.md Dont explain running input or overview:"
-    + userInput}
-  ]
-)
+    with open('input.txt', 'w', encoding="utf-8") as file:
+        # file.write("\n\n---------Chat Reponse-----------")
+        file.write(str(completion.choices[0].message.content))
+        # file.write("\n-----------End of reponse-----------\n")
 
-print(completion.choices[0].message.content)
+def tester(filepath, error_code) -> None:
+    with open(filepath, 'r', encoding="utf-8") as file:
+        file_content = file.read()
+    completion = client.chat.completions.create(
+    model="gpt-4o-mini",
+    store=True,
+    messages=[
+        {"role": "user", "content": "create website using python flask main.py using input "
+        + "Error in\n" + file_content + "\n" + error_code + "give updated code no explanation:"}
+    ]    
+    )
+    with open('outputTest.txt', 'w', encoding="utf-8") as file:
+        file.write(str(completion.choices[0].message.content))
 
-with open('output.txt', 'a', encoding="utf-8") as file:
-    file.write("\n\n---------Chat Reponse-----------")
-    file.write(str(completion.choices[0].message.content))
-    file.write("\n-----------End of reponse-----------\n")
