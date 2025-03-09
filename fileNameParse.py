@@ -53,35 +53,46 @@ def old_convert_text_to_json(input_text: str) -> dict:
     return json_output
 
 def convert_text_to_json(input_text: str) -> dict:
-    lines = input_text.split("\n")
+    lines = input_text.splitlines(keepends=True)
     insideCode = False
 
     jsonString = "{"
 
     filepath = ""
     for line in lines :
-        if (line == "```python") :
+        if (line.strip() == "```python") :
             insideCode = True
             jsonString += "\"" + filepath + "\"" + ":\""
-        if (line == "```html") :
+            continue
+        if (line.strip() == "```html") :
             insideCode = True
             jsonString += "\"" + filepath + "\"" + ":\""
-        if (line == "```markdown") :
+            continue
+        if (line.strip() == "```markdown") :
             insideCode = True
             jsonString += "\"" + filepath + "\"" + ":\""
+            continue
 
-        splitLines = line.split()
-        if len(splitLines) == 2 :
+        splitLines = line.strip().split()
+        if not insideCode and len(splitLines) == 2 :
+            lastChar = splitLines[1][-1]
+            while (lastChar == "`" or lastChar == "*") :
+                splitLines[1] = splitLines[1][:-1]
+                lastChar = splitLines[1][-1]
+            firstChar = splitLines[1][0]
+            while (firstChar == "`" or firstChar == "*") :
+                splitLines[1] = splitLines[1][1:]
+                firstChar = splitLines[1][0]
             filepath = splitLines[1]
-            filepath = filepath.replace("`",'"')
         
         if(insideCode) :
+            line = line.replace("\"", "\\\\\\\"")
             jsonString += line
 
-        if insideCode and line == "```" :
+        if insideCode and line.strip() == "```" :
             insideCode = False
+            jsonString = jsonString[:-4] 
             jsonString += "\","
-    jsonString = jsonString[:-1]
     jsonString = jsonString[:-1]
     jsonString += "}"
 

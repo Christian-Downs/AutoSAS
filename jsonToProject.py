@@ -17,7 +17,7 @@ def jsonToProject (nameAndContent):
             renameOutputFolder("output", 1) # rename output folder to save previous websites, also "deletes" the output folder
     except Exception as e:
         pass
-    nameAndContentObject = json.loads(nameAndContent)
+    nameAndContentObject = json.loads(nameAndContent, strict=False)
     for filepath in nameAndContentObject :
         with safeOpen("output/" + filepath, 'w') as file:
             file.write(nameAndContentObject[filepath])
