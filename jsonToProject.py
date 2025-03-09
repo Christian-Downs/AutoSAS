@@ -7,7 +7,6 @@ def renameOutputFolder (outputName, i) :
         renameOutputFolder(outputName, i + 1)
     os.rename(outputName, "output" + str(i))
 
-
 def safeOpen (path, openType) :
     os.makedirs(os.path.dirname(path), exist_ok = True)
     return open(path, openType)
