@@ -1,50 +1,104 @@
-Here's a simple Flask application structure for storing employee information. The application will have a main file named `main.py`, a template for input form, and a way to store employee information.
+Here's a simple Flask web application for storing employee information. Below is the file structure, code for each file, and a sample `README.md`.
 
 ### File Structure
+
 ```
-employee_app/
+employee_info/
+│
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── models.py
+│   └── templates/
+│       ├── index.html
+│       └── employee_form.html
 │
 ├── main.py
-├── templates/
-│   ├── index.html
-│   └── employee_list.html
 └── README.md
 ```
 
-### File Codes
+### Code Files
 
-#### `main.py`
+#### 1. `main.py`
+
 ```python
-from flask import Flask, render_template, request, redirect, url_for
+from app import create_app
 
-app = Flask(__name__)
-
-# Temporary in-memory storage for employee info
-employees = []
-
-@app.route('/')
-def index():
-    return render_template('index.html', employees=employees)
-
-@app.route('/add', methods=['POST'])
-def add_employee():
-    name = request.form['name']
-    position = request.form['position']
-    salary = request.form['salary']
-    
-    if name and position and salary:
-        employee = {'name': name, 'position': position, 'salary': salary}
-        employees.append(employee)
-    
-    return redirect(url_for('index'))
+app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)
 ```
 
-#### `templates/index.html`
+#### 2. `app/__init__.py`
+
+```python
+from flask import Flask
+from .routes import main
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///employees.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    with app.app_context():
+        from .models import db
+        db.init_app(app)
+        db.create_all()
+
+    app.register_blueprint(main)
+    return app
+```
+
+#### 3. `app/models.py`
+
+```python
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Employee(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    position = db.Column(db.String(100), nullable=False)
+    salary = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f'<Employee {self.name}>'
+```
+
+#### 4. `app/routes.py`
+
+```python
+from flask import Blueprint, render_template, request, redirect, url_for
+from .models import db, Employee
+
+main = Blueprint('main', __name__)
+
+@main.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        name = request.form['name']
+        position = request.form['position']
+        salary = request.form['salary']
+        
+        new_employee = Employee(name=name, position=position, salary=salary)
+        db.session.add(new_employee)
+        db.session.commit()
+        return redirect(url_for('main.index'))
+    
+    employees = Employee.query.all()
+    return render_template('index.html', employees=employees)
+
+@main.route('/add')
+def add_employee():
+    return render_template('employee_form.html')
+```
+
+#### 5. `app/templates/index.html`
+
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -52,85 +106,98 @@ if __name__ == '__main__':
     <title>Employee Info</title>
 </head>
 <body>
-    <h1>Employee Information</h1>
-    
-    <form action="/add" method="POST">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="position" placeholder="Position" required>
-        <input type="text" name="salary" placeholder="Salary" required>
-        <button type="submit">Add Employee</button>
-    </form>
-
-    <h2>Employee List</h2>
-    <ul>
+    <h1>Employee List</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Salary</th>
+        </tr>
         {% for employee in employees %}
-            <li>{{ employee.name }} - {{ employee.position }} - ${{ employee.salary }}</li>
+        <tr>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.position }}</td>
+            <td>{{ employee.salary }}</td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
+    <a href="/add">Add Employee</a>
 </body>
 </html>
 ```
 
-#### `templates/employee_list.html`
+#### 6. `app/templates/employee_form.html`
+
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee List</title>
+    <title>Add Employee</title>
 </head>
 <body>
-    <h1>Employee List</h1>
-    <ul>
-        {% for employee in employees %}
-            <li>{{ employee.name }} - {{ employee.position }} - ${{ employee.salary }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/">Back</a>
+    <h1>Add Employee</h1>
+    <form method="post" action="/">
+        <label>Name: </label>
+        <input type="text" name="name" required>
+        <label>Position: </label>
+        <input type="text" name="position" required>
+        <label>Salary: </label>
+        <input type="number" step="0.01" name="salary" required>
+        <button type="submit">Add Employee</button>
+    </form>
+    <a href="/">Back to Employee List</a>
 </body>
 </html>
 ```
 
-#### `README.md`
-```markdown
-# Employee Info Application
+#### 7. `README.md`
 
-This is a simple Flask application for storing and displaying employee information.
+```markdown
+# Employee Info Flask App
+
+This is a simple Flask web application to store and manage employee information.
 
 ## File Structure
+
 ```
-employee_app/
+employee_info/
 │
-├── main.py               # Main application file
-├── templates/            # Contains HTML templates
-│   ├── index.html        # Form to add an employee
-│   └── employee_list.html # Display list of employees
-└── README.md             # This documentation file
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── models.py
+│   └── templates/
+│       ├── index.html
+│       └── employee_form.html
+│
+├── main.py
+└── README.md
 ```
 
 ## Requirements
-- Python 3.x
-- Flask
 
-## Installation
-1. Clone the repository or download the files.
-2. Install Flask if you haven't already:
+- Flask
+- Flask-SQLAlchemy
+
+## Setup
+
+1. Create a virtual environment and activate it.
+2. Install the required packages:
    ```bash
-   pip install flask
+   pip install Flask Flask-SQLAlchemy
+   ```
+3. Run the application:
+   ```bash
+   python main.py
    ```
 
-## Running the Application
-To start the Flask application, run:
-```bash
-python main.py
-```
-
-Open your web browser and go to `http://127.0.0.1:5000/` to access the application.
-
 ## Usage
-- Fill in the employee's name, position, and salary in the form and click "Add Employee".
-- The employee will be listed below the form.
+
+- Navigate to `http://127.0.0.1:5000/` to view the employee list.
+- Click on "Add Employee" to add new employee information.
 ```
 
-This structure creates a basic application where users can submit employee data, and it will display that data on the homepage.
+### Note
+Make sure to adjust the Python environment and install the required packages before running the application.
