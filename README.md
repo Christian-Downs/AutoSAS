@@ -9,7 +9,7 @@ This project requires the following Python packages:
 You can install these dependencies using the `requirements.txt` file: <code>pip install -r requirements.txt</code>
 
 ## Usage 
-Run <code>python main.py</code> and connect to oputted server. Enter website idea into textbox. Website will give you zip file for you to download. 
+Run <code>python main.py</code> and ctr + left click outputted ip address. Enter website idea into textbox. Website will give you zip file for you to download. 
 
 ## Overview
 
