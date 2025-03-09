@@ -5,6 +5,8 @@ from jsonToProject import jsonToProject
 import fileZipOutput
 from test_code import tester
 import json
+import shutil
+import os
 
 #Render webpage
 app = Flask(__name__)
@@ -18,6 +20,9 @@ def my_form():
 #Send user input and execute code
 @app.route('/', methods=['POST'])
 def my_form_post():
+    output_folder = 'output'
+    if os.path.exists(output_folder):
+        shutil.rmtree(output_folder)
     # Example Usage:
     text = request.form.get('text')
     print(request)
