@@ -60,7 +60,7 @@ def jsonFromResponse (response) :
     
     return json
 
-jsonToProject(" {\"newFolder/file1\" : \"file1 contents\" , \"file2\" : \"file2 contents\"} ")
+# jsonToProject(" {\"newFolder/file1\" : \"file1 contents\" , \"file2\" : \"file2 contents\"} ")
 
 print(jsonFromResponse(" {\"newFolder\\file1\" : \"file1 {} contents\" , \"file2\" : \"file2 contents\"} "))
 
