@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from aiTester import caller
 from fileNameParse import convert_text_to_json
 from jsonToProject import jsonToProject
+from configparser import ConfigParser
 
 app = Flask(__name__)
 
@@ -23,7 +24,7 @@ def my_form_post():
         file.close()
     with open("Output.json", "w") as file:
         json_data = convert_text_to_json(file_content)
-        file.write(json_data)
+        file.write(str(json_data))
     jsonToProject(str(json_data))
 
     return "PROCESSED"
