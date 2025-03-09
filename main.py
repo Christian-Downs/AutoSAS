@@ -7,10 +7,12 @@ from test_code import tester
 import json
 import shutil
 import os
+from werkzeug.serving import WSGIRequestHandler
 
 #Render webpage
 app = Flask(__name__)
 
+WSGIRequestHandler.timeout = 600  # 10 minutes
 
 
 @app.route('/')
@@ -51,4 +53,4 @@ def my_form_post():
     
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

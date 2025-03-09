@@ -23,7 +23,6 @@ def tester(filepath, error_code) -> None:
         file_content = file.read()
     completion = client.chat.completions.create(
     model="gpt-4o-mini",
-    store=True,
     messages=[
         {"role": "user", "content": "create website using python flask main.py using input "
         + "Error in\n" + file_content + "\n" + error_code + "give updated code no explanation:"}
