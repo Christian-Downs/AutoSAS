@@ -1,3 +1,6 @@
 .idea
 __*
 .DS_Store
+API_KEY.txt
+.venv
+/output*

@@ -3,10 +3,14 @@ from aiTester import caller
 from fileNameParse import convert_text_to_json
 from jsonToProject import jsonToProject
 import fileZipOutput
-
+from test_code import tester
+import json
 
 #Render webpage
 app = Flask(__name__)
+
+
+
 @app.route('/')
 def my_form():
     return render_template('my-form.html')
@@ -31,11 +35,14 @@ def my_form_post():
 
     #convert .json to files
     jsonToProject(str(json_data))
+    
+    tester()
+
 
     #convert files to zip and display back to user
     fileZipOutput.folder_to_zip("output")
     return fileZipOutput.send_to_user()
     
-#main call
+
 if __name__ == '__main__':
     app.run(debug=True)
