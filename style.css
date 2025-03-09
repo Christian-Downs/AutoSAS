@@ -1,23 +1,37 @@
 
 body {
-    background: linear-gradient(132deg, #000000,#00ff00, #0000ff,#e60073,#ff0000,#ffffff);
+    background: linear-gradient(132deg, #000000,#17ad17, #1436b3,#981054,#b72424,#ffbdbd);
     background-size: 400% 400%;
-    animation: BackgroundGradient 15s ease infinite;
+    animation: BackgroundGradient 20s ease infinite;
 }
-  
+
 h1 {
-position: absolute;
-left: 50%;
-top: 50%;
-transform: translateX(-50%) translateY(-50%);
-font-family: Open Sans, sans-serif;
-color: #fff;
-font-weight: 400;
-text-transform: uppercase;
-text-align: center;
-font-size: 2em;
-padding: 5px;
+    text-align: center;
+    font-family: Open Sans, sans-serif;
+    color: #fff;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 2em;
+    padding: 10px;
+    margin-bottom: 10px; /* Space between title and chat box */
+    font-size: 2em;
+    color: white;
+    text-shadow: 0px 0px 5px rgba(197, 197, 197, 0.7); /* Horizontal, Vertical, Blur, Color */
 }
+
+p {
+    text-align: center;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+    color: #ffffff9e;
+    margin-bottom: 30px;
+    line-height: 19px;
+}
+
+.description {
+    width: 55%;
+}
+ 
 @keyframes BackgroundGradient {
 0% {background-position: 0% 50%;}
 50% {background-position: 100% 50%;}
@@ -37,13 +51,120 @@ padding: 5px;
     /* background-color: blue; */
 }
 
-.description{
-    margin-left : 10%;
-    margin-right: 10%;
-    background-color: #d3d3d382;
-
+.submit-button {
+    margin-top: 15px;
+    position: absolute;
+    bottom: 7px;
+    right: 13px;
+    color: rgba(255, 255, 255, 0.734);
 }
 
-.SubmitButton {
-    margin-left: 1em;
+.submit-button:hover {
+    color: #fff;
+    cursor: pointer;
+    text-shadow: 0px 0px 4px rgba(255, 255, 255, 0.7); /* Horizontal, Vertical, Blur, Color */
+}
+
+.chat-box {
+    position: relative;
+    width: 100%;
+    min-height: 60px; /* Initial height */
+    max-width: 80%;
+    border-radius: 20px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start; /* Align to top to allow expansion */
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+    border: 2px solid white; /* Replace SVG border with a flexible border */
+    background-color: #0000002e;
+  }
+  
+/* strong box shadow on hover */
+.chat-box:hover {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    border-color: #fff; /* Change border color on hover */
+    background-color: #00000069; /* Darker background on hover */
+    transition: all 0.3s ease-in-out;
+}
+
+  #chat {
+    width: 100%;
+    min-height: 60px;
+    max-height: 200px;
+    height: auto;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    padding: 12px;
+    color: white;
+    font-size: 1.2em;
+    outline: none;
+    resize: none;
+    overflow-y: hidden; /* No scrollbar unless necessary */
+  }
+  
+  .chat-form {
+    margin-top: 0px;
+    display: flex;
+    align-items: center;
+    width: 97%;
+  }
+
+  /* Centering the content */
+.container {
+    text-align: center; /* Centers inline elements */
+    margin: 0 auto;
+    padding: 20px;
+    justify-content: center;
+}
+
+/* Styling the button */
+.animated-button {
+    background-color: rgb(255, 255, 255);
+    border: 0px;
+    color: black;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 25px; /* Rounded corners */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: block;
+    margin: 20px auto; /* Centers below the div */
+}
+
+/* Hover animation */
+.animated-button:hover {
+    background-color: black;
+    border: 2px solid white;
+    color: white;
+    transform: scale(1.1); /* Slight pop effect */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Click animation */
+.animated-button:active {
+    transform: scale(0.95); /* Slight shrink effect on click */
+}
+
+.output-log {
+    text-align: left;
+    width: 80%;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Full viewport height */
+}
+
+.row {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; /* Space between rows */
 }
