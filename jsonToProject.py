@@ -20,7 +20,9 @@ def jsonToProject (nameAndContent):
     nameAndContentObject = json.loads(nameAndContent, strict=False)
     for filepath in nameAndContentObject :
         with safeOpen("output/" + filepath, 'w') as file:
-            file.write(nameAndContentObject[filepath])
+            rawContent = nameAndContentObject[filepath]
+            cleanContent = rawContent.replace("\\\"", "\"")
+            file.write(cleanContent)
 
 
 # key is filename or the folder name
