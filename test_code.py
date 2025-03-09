@@ -3,6 +3,7 @@ import os
 import logging
 import subprocess
 import re
+from updater import updater
 
 # read config file with 'General' section
 config = ConfigParser()
@@ -47,7 +48,6 @@ def modify_traceback(tb, project_root):
     return "\n".join(modified_tb)
 
 
-# if __name__ == '__main__':
 def tester():
     tries_counter = 0
     max_tries = int(config.get('Generation', 'num_tries'))
@@ -98,13 +98,14 @@ def tester():
         # check if errors...
         else:
             logging.warning(f'Error running {python_source}')
-
+            updater(stderr.strip())
+            return
             # Extract the last line (error type and message)
             error_lines = stderr.strip().split("\n")
             error_message = error_lines[-1]  # The last line contains the error
 
             # Extract line number using regex
-            match = re.search(r'File ".*?", line (\d+)', stderr)
+            match = re.search(r'line (\d+)', stderr)
             line_number = int(match.group(1)) if match else None
 
             # Extract error name using regex
@@ -112,7 +113,10 @@ def tester():
             error_name = error_match.group(1) if error_match else None
 
             logging.info(f"{error_name} at line {line_number}")
-
+            output = {
+                "line": line_number,
+                "error_name": error_name
+            }
             # TODO: tell GPT to fix the error in the python_source file
             # stdout is the output of the program
             # stdderr has the entire error output
@@ -124,3 +128,6 @@ def tester():
         tries_counter += 1
 
     logging.error(f'Failed to run {python_source} after {max_tries} tries')
+
+if __name__ == '__main__':
+    tester()
