@@ -1,0 +1,14 @@
+Give file structure first, static template folders, file code, README.md, json for all files last. Dont explain running input or overview or license: I need a website that keeps track of peoples mothers and phone number and their relationship status and husbands work schedule 
+
+give me the project formatted as a json with file and folder names as keys, and file contents as values. 
+# Example:
+output.json:
+[
+{
+"root-folder":
+{
+"README.md": "# Inventory Website\n\nThis is a simple website where users can...",
+"app.py": "from flask import Flask...",
+"requirements.txt": "Flask==..." 
+}
+]
