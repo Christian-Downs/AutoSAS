@@ -7,7 +7,7 @@ def caller(prompt) -> None:
     store=True,
     messages=[
         {"role": "user", "content": "create website using python flask main.py using input "
-        + "Give file structure, file code, README.md Dont explain running input or overview:"
+        + "Give file structure with space before file name ex: \"--- filename.html\", file code, README.md Dont explain running input or overview:"
         + prompt}
     ]
     )
