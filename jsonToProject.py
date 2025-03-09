@@ -20,19 +20,7 @@ def jsonToProject (nameAndContent):
     nameAndContentObject = json.loads(nameAndContent)
     for filepath in nameAndContentObject :
         with safeOpen("output/" + filepath, 'w') as file:
-            file.write(str(nameAndContentObject[filepath])) 
-
-    
-
-def safeOpen (path, openType) :
-    os.makedirs(os.path.dirname(path), exist_ok = True)
-    return open(path, openType)
-
-def jsonToProject (nameAndContent): 
-    nameAndContentObject = json.loads(nameAndContent)
-    for filepath in nameAndContentObject :
-        with safeOpen("output/" + filepath, 'w') as file:
-            file.write(str(nameAndContentObject[filepath]))
+            file.write(nameAndContentObject[filepath])
 
 
 # key is filename or the folder name

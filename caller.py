@@ -5,10 +5,25 @@ client = OpenAI()
 
 def caller(prompt, system = None):
     messages = [
-        {"role": "user", 
-         "content": "create website using python flask main.py using input "
-            + "Give file structure, file code, README.md Dont explain running input or overview:"
-            + prompt}
+
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": "Hello"
+            }
+        ]
+        },
+        {
+        "role": "assistant",
+        "content": [
+            {
+            "type": "text",
+            "text": "Hello! How can I assist you today?"
+            }
+        ]
+        }
     ]
 
     response = client.chat.completions.create(
@@ -23,9 +38,5 @@ def caller(prompt, system = None):
     frequency_penalty=0,
     presence_penalty=0
     )
-
-    with open("output.txt", 'a') as file:
-        file.write(str(response.choices[0].message.content))
-    return response.choices[0].message.content
 
 

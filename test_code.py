@@ -47,8 +47,8 @@ def modify_traceback(tb, project_root):
     return "\n".join(modified_tb)
 
 
-if __name__ == '__main__':
-
+# if __name__ == '__main__':
+def tester():
     tries_counter = 0
     max_tries = int(config.get('Generation', 'num_tries'))
 
@@ -57,7 +57,6 @@ if __name__ == '__main__':
     py_source_files = config.get('Generation', 'py_source_files').split(',')
 
     while tries_counter < max_tries:
-        # TODO: generate code in output_dir folder
         python_source = ""
 
         # check if we have a valid python source file (in order specified in config)
@@ -95,7 +94,7 @@ if __name__ == '__main__':
 
         if process.returncode == 0:
             logging.info(f'{python_source} ran successfully')
-            exit(0)
+            return True
         # check if errors...
         else:
             logging.warning(f'Error running {python_source}')
