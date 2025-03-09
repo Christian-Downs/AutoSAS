@@ -25,10 +25,10 @@ def tester(filepath, error_code) -> None:
     model="gpt-4o-mini",
     store=True,
     messages=[
-        {"role": "user", "content": "create website using python flask main.py using input "
-        + "Error in\n" + file_content + "\n" + error_code + "give updated code no explanation:"}
+        {"role": "user", "content":"Error in\n" + file_content + "\n" + error_code + "give updated code no explanation:"}
     ]    
     )
+
     with open('outputTest.txt', 'w', encoding="utf-8") as file:
         file.write(str(completion.choices[0].message.content))
-
+    return str(completion.choices[0].message.content)
