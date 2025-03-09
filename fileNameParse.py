@@ -79,17 +79,21 @@ def convert_text_to_json(input_text: str) -> dict:
 
 
         splitLines = line.strip().split()
-        if not insideCode and len(splitLines) == 2 :
-            lastChar = splitLines[1][-1]
-            while (lastChar == "`" or lastChar == "*") :
-                splitLines[1] = splitLines[1][:-1]
-                lastChar = splitLines[1][-1]
-            firstChar = splitLines[1][0]
-            while (firstChar == "`" or firstChar == "*") :
-                splitLines[1] = splitLines[1][1:]
-                firstChar = splitLines[1][0]
-            filepath = splitLines[1]
-        
+        if not insideCode and len(splitLines) <= 5 and len(splitLines) >= 1:
+            if  len(splitLines[0]) != 0 :
+                filenameIndex = len(splitLines) - 1
+                lastChar = splitLines[filenameIndex][-1]
+                while splitLines[filenameIndex] != "`" and splitLines[filenameIndex] != "*" and (lastChar == "`" or lastChar == "*") :
+                    print("the output is")
+                    print (splitLines[filenameIndex][:-1])
+                    splitLines[filenameIndex] = splitLines[filenameIndex][:-1]
+                    lastChar = splitLines[filenameIndex][-1]
+                firstChar = splitLines[filenameIndex][0]
+                while splitLines[filenameIndex] != "`" and splitLines[filenameIndex] != "*" and (firstChar == "`" or firstChar == "*") :
+                    splitLines[-1] = splitLines[filenameIndex][1:]
+                    firstChar = splitLines[filenameIndex][0]
+                filepath = splitLines[filenameIndex]
+            
         if(insideCode) :
             line = line.replace("\"", "\\\\\\\"")
             jsonString += line
@@ -107,12 +111,3 @@ def save_json_to_file(json_data: dict, filename: str):
     with open(filename, "w") as f:
         json.dump(json_data, f, indent=4)
 
-
-if __name__ == "__main__":
-    with open("input.txt", "r") as file:
-        input_text = file.read()
-
-    json_output = convert_text_to_json(input_text)
-    save_json_to_file(json_output, "Output.json")
-
-    print("JSON structure saved to Output.json")
