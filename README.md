@@ -1,32 +1,23 @@
-# Employee Info Flask Application
+# AutoSAS
 
-This is a simple Flask application to store and display employee information.
-
-## Structure
-
-- `main.py`: The main application file.
-- `employee.db`: SQLite database file for storing employee information.
-- `templates/index.html`: HTML file for rendering the employee form and employee list.
-- `static/style.css`: CSS file for styling the application.
-
+This project asks the user for a description of a website and then creates the basic files and files structures the user will need for that website. This project can be used to significantly speed up the website development process through the automation of the begining process. 
 ## Setup
+This project requires the following Python packages:
 
-1. Install the required packages:
-   ```bash
-   pip install Flask Flask-SQLAlchemy
-   ```
+- Flask
 
-2. Run the application:
-   ```bash
-   python main.py
-   ```
+You can install these dependencies using the `requirements.txt` file: <code>pip install -r requirements.txt</code>
 
-3. Open your web browser and go to `http://127.0.0.1:5000/`.
+## Usage 
+Run <code>python main.py</code> and ctr + left click outputted ip address. Enter website idea into textbox. Website will give you zip file for you to download. 
 
-## Usage
+## Overview
 
-- Fill in the form to add a new employee.
-- The added employee will be displayed in the list below the form.
-```
+### Technology
 
-This code creates a simple web application where you can input employee details (name, position, department) and view them in a list. The SQLite database (`employee.db`) will store this information.
+This project uses phython flask to create and display a webpage to the user and ask for their input. It then sends the user input through ChatGPT's API to create the basic files and structure. 
+
+### Problem
+
+Website creation is often a tedious process with lots of similiar steps. This project will allow a website developer to start from a template specifically created from the input the user gives. 
+

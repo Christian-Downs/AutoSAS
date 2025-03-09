@@ -3,6 +3,7 @@ import os
 import logging
 import subprocess
 import re
+from updater import updater
 
 # read config file with 'General' section
 config = ConfigParser()
@@ -12,6 +13,7 @@ config.read('config.ini')
 level = config.get('General', 'log_level')
 log_format = "%(levelname).4s | %(asctime)s | %(message)s"
 logging.basicConfig(level=level, format=log_format, datefmt="%H:%M:%S")
+
 
 def find_files(root_dir, filename):
     """
@@ -30,22 +32,23 @@ def find_files(root_dir, filename):
             results.append(os.path.join(root, filename))
     return results
 
+
 # Remove file paths higher than project_root from traceback
 def modify_traceback(tb, project_root):
     # Split the traceback by line and modify each line
     tb_lines = tb.splitlines()
     modified_tb = []
-    
+
     for line in tb_lines:
         if project_root in line:
             # Keep everything from "output" onward
             line = line.split(project_root, 1)[-1]
         modified_tb.append(line)
-    
+
     return "\n".join(modified_tb)
 
-if __name__ == '__main__':
 
+def tester():
     tries_counter = 0
     max_tries = int(config.get('Generation', 'num_tries'))
 
@@ -54,7 +57,6 @@ if __name__ == '__main__':
     py_source_files = config.get('Generation', 'py_source_files').split(',')
 
     while tries_counter < max_tries:
-        # TODO: generate code in output_dir folder
         python_source = ""
 
         # check if we have a valid python source file (in order specified in config)
@@ -92,25 +94,29 @@ if __name__ == '__main__':
 
         if process.returncode == 0:
             logging.info(f'{python_source} ran successfully')
-            exit(0)
+            return True
         # check if errors...
         else:
             logging.warning(f'Error running {python_source}')
-
+            updater(stderr.strip())
+            return
             # Extract the last line (error type and message)
             error_lines = stderr.strip().split("\n")
             error_message = error_lines[-1]  # The last line contains the error
 
             # Extract line number using regex
-            match = re.search(r'File ".*?", line (\d+)', stderr)
+            match = re.search(r'line (\d+)', stderr)
             line_number = int(match.group(1)) if match else None
 
             # Extract error name using regex
             error_match = re.match(r'(\w+Error)', error_message)
             error_name = error_match.group(1) if error_match else None
-            
-            logging.info(f"{error_name} at line {line_number}")
 
+            logging.info(f"{error_name} at line {line_number}")
+            output = {
+                "line": line_number,
+                "error_name": error_name
+            }
             # TODO: tell GPT to fix the error in the python_source file
             # stdout is the output of the program
             # stdderr has the entire error output
@@ -122,3 +128,6 @@ if __name__ == '__main__':
         tries_counter += 1
 
     logging.error(f'Failed to run {python_source} after {max_tries} tries')
+
+if __name__ == '__main__':
+    tester()

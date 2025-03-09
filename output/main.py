@@ -1,3 +1,6 @@
-import helper
+import files.runner
 
-helper.faulty_function()
+def broken_function():
+    print("This function is broken")
+
+broken_function()

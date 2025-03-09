@@ -2,10 +2,8 @@ import json
 import re
 
 
-#This function converts an AI response into corresponding json file
-def convert_text_to_json(input_text: str) -> str:
-
-    # method uses regex to match certain patterns in output
+def old_convert_text_to_json(input_text: str) -> dict:
+     # method uses regex to match certain patterns in output
     result = {}
     
     # Match the file structure header
@@ -54,12 +52,67 @@ def convert_text_to_json(input_text: str) -> str:
 
     return json_output
 
-def save_json_to_file(json_data: str, filename: str):
-    with open(filename, 'w') as f:
-        f.write(json_data)
+def convert_text_to_json(input_text: str) -> dict:
+    lines = input_text.splitlines(keepends=True)
+    insideCode = False
 
-# Example Usage:
-file_path = 'input.txt'
-with open(file_path, 'r') as file:
-    file_content = file.read()
-print(convert_text_to_json(file_content))
+    jsonString = "{"
+
+    filepath = ""
+    for line in lines :
+        if (line.strip() == "```python") :
+            insideCode = True
+            jsonString += "\"" + filepath + "\"" + ":\""
+            continue
+        if (line.strip() == "```html") :
+            insideCode = True
+            jsonString += "\"" + filepath + "\"" + ":\""
+            continue
+        if (line.strip() == "```css") :
+            insideCode = True
+            jsonString += "\"" + filepath + "\"" + ":\""
+            continue
+        if (line.strip() == "```markdown") :
+            insideCode = True
+            jsonString += "\"" + filepath + "\"" + ":\""
+            continue
+
+
+        splitLines = line.strip().split()
+        if not insideCode and len(splitLines) == 2 :
+            lastChar = splitLines[1][-1]
+            while (lastChar == "`" or lastChar == "*") :
+                splitLines[1] = splitLines[1][:-1]
+                lastChar = splitLines[1][-1]
+            firstChar = splitLines[1][0]
+            while (firstChar == "`" or firstChar == "*") :
+                splitLines[1] = splitLines[1][1:]
+                firstChar = splitLines[1][0]
+            filepath = splitLines[1]
+        
+        if(insideCode) :
+            line = line.replace("\"", "\\\\\\\"")
+            jsonString += line
+
+        if insideCode and line.strip() == "```" :
+            insideCode = False
+            jsonString = jsonString[:-4] 
+            jsonString += "\","
+    jsonString = jsonString[:-1]
+    jsonString += "}"
+
+    return jsonString
+
+def save_json_to_file(json_data: dict, filename: str):
+    with open(filename, "w") as f:
+        json.dump(json_data, f, indent=4)
+
+
+if __name__ == "__main__":
+    with open("input.txt", "r") as file:
+        input_text = file.read()
+
+    json_output = convert_text_to_json(input_text)
+    save_json_to_file(json_output, "Output.json")
+
+    print("JSON structure saved to Output.json")
