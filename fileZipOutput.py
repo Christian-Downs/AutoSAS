@@ -7,6 +7,8 @@ toZipName = "UserProject.zip"
 def folder_to_zip(foldername):
     shutil.make_archive(toZipName.replace('.zip', ''), 'zip', foldername)
 
+app = Flask(__name__)
+
 @app.route('/download_zip')
 def send_to_user():
     upload = toZipName

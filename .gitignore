@@ -4,3 +4,5 @@ __*
 API_KEY.txt
 .venv
 /output*
+.vscode/launch.json
+/output
