@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>AutoSAS</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
   <!-- <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css"> -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -14,7 +14,7 @@
 
   <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
   <main>
     <div class="container">
@@ -30,10 +30,11 @@
       </div>
       <div class="row">
         <div class="chat-box">
-          <form action="" class="chat-form">
-            <textarea placeholder="Type your prompt here..." id="chat" autocomplete="off"></textarea>
+          <form method="POST" class="chat-form" action="{{url_for('my_form_post')}}">
+            <textarea placeholder="Type your prompt here..." id="chat" autocomplete="off" name="text"></textarea>
+            <div class="submit-button"><i class="fa fa-arrow-right"></i></div>
+
           </form>
-          <div class="submit-button"><i class="fa fa-arrow-right"></i></div>
         </div>
       </div>
       <div class="row">
