@@ -55,28 +55,32 @@ def old_convert_text_to_json(input_text: str) -> dict:
 def convert_text_to_json(input_text: str) -> dict:
     lines = input_text.splitlines(keepends=True)
     insideCode = False
-
+    inMarkdown = False
     jsonString = "{"
 
     filepath = ""
     for line in lines :
         if (line.strip() == "```python") :
             insideCode = True
+            inMarkdown = False
             jsonString += "\"" + filepath + "\"" + ":\""
             continue
         if (line.strip() == "```html") :
             insideCode = True
+            inMarkdown = False
             jsonString += "\"" + filepath + "\"" + ":\""
             continue
         if (line.strip() == "```css") :
             insideCode = True
+            inMarkdown = False
             jsonString += "\"" + filepath + "\"" + ":\""
             continue
         if (line.strip() == "```markdown") :
-            insideCode = True
+            inMarkdown = True
             jsonString += "\"" + filepath + "\"" + ":\""
             continue
 
+        
 
         splitLines = line.strip().split()
         if not insideCode and len(splitLines) <= 5 and len(splitLines) >= 1:
@@ -93,7 +97,7 @@ def convert_text_to_json(input_text: str) -> dict:
                     firstChar = splitLines[filenameIndex][0]
                 filepath = splitLines[filenameIndex]
             
-        if(insideCode) :
+        if(insideCode or inMarkdown) :
             line = line.replace("\"", "\\\\\\\"")
             jsonString += line
 
@@ -101,6 +105,13 @@ def convert_text_to_json(input_text: str) -> dict:
             insideCode = False
             jsonString = jsonString[:-4] 
             jsonString += "\","
+    if inMarkdown :
+        capturedTics = 0
+        while (capturedTics < 3) :
+            if (jsonString[-1] == "`") :
+                capturedTics += 1
+            jsonString = jsonString[:-1]
+        jsonString += "\","
     jsonString = jsonString[:-1]
     jsonString += "}"
 
