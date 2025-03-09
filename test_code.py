@@ -13,6 +13,7 @@ level = config.get('General', 'log_level')
 log_format = "%(levelname).4s | %(asctime)s | %(message)s"
 logging.basicConfig(level=level, format=log_format, datefmt="%H:%M:%S")
 
+
 def find_files(root_dir, filename):
     """
     Recursively searches for a file in a directory and its subdirectories.
@@ -30,19 +31,21 @@ def find_files(root_dir, filename):
             results.append(os.path.join(root, filename))
     return results
 
+
 # Remove file paths higher than project_root from traceback
 def modify_traceback(tb, project_root):
     # Split the traceback by line and modify each line
     tb_lines = tb.splitlines()
     modified_tb = []
-    
+
     for line in tb_lines:
         if project_root in line:
             # Keep everything from "output" onward
             line = line.split(project_root, 1)[-1]
         modified_tb.append(line)
-    
+
     return "\n".join(modified_tb)
+
 
 if __name__ == '__main__':
 
@@ -108,7 +111,7 @@ if __name__ == '__main__':
             # Extract error name using regex
             error_match = re.match(r'(\w+Error)', error_message)
             error_name = error_match.group(1) if error_match else None
-            
+
             logging.info(f"{error_name} at line {line_number}")
 
             # TODO: tell GPT to fix the error in the python_source file
