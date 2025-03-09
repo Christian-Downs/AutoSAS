@@ -23,6 +23,9 @@ def caller(prompt, system = None):
     frequency_penalty=0,
     presence_penalty=0
     )
+
+    with open("output.txt", 'a') as file:
+        file.write(str(response.choices[0].message.content))
     return response.choices[0].message.content
 
 

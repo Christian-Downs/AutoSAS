@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 
-def renameOutputFolder (outputName, i) :
+""" def renameOutputFolder (outputName, i) :
     if (os.path.exists("output" + str(i))) :
         renameOutputFolder(outputName, i + 1)
     os.rename(outputName, "output" + str(i))
@@ -20,7 +20,20 @@ def jsonToProject (nameAndContent):
     nameAndContentObject = json.loads(nameAndContent)
     for filepath in nameAndContentObject :
         with safeOpen("output/" + filepath, 'w') as file:
+            file.write(str(nameAndContentObject[filepath])) """
+
+    
+
+def safeOpen (path, openType) :
+    os.makedirs(os.path.dirname(path), exist_ok = True)
+    return open(path, openType)
+
+def jsonToProject (nameAndContent): 
+    nameAndContentObject = json.loads(nameAndContent)
+    for filepath in nameAndContentObject :
+        with safeOpen("output/" + filepath, 'w') as file:
             file.write(str(nameAndContentObject[filepath]))
+
 
 # key is filename or the folder name
 # value is file contents if it is a string

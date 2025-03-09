@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from aiTester import caller
 from fileNameParse import convert_text_to_json
 from jsonToProject import jsonToProject
+import json
 
 app = Flask(__name__)
 
@@ -10,6 +11,39 @@ app = Flask(__name__)
 def my_form():
     return render_template('my-form.html')
 
+def jsonFromResponse (response) :
+    openBraceCount = 0
+
+    json = ""
+    for char in response :
+        if char == "{" :
+            openBraceCount += 1
+        
+        if openBraceCount > 0:
+            json += char
+
+        if char == "}" :
+            openBraceCount -= 1
+    
+    return json
+
+def templateJsonToPathJson (badJson) :
+    badDict = json.loads(badJson)
+    keys = list(badDict.keys())
+    fileTemplate = "\"" + badDict[keys[0]] + "\""
+
+    fileJson = json.loads(fileTemplate)
+    fileList = list(fileJson.keys())    
+
+{'employee_app': {'': None},
+ '│': None,
+ '├── main.py': None,
+ '├── templates': {'': None}, 
+ '│   ├── index.html': None,
+ '│   └── employee_list.html': None,
+ '└── README.md': None
+}
+    
 
 @app.route('/', methods=['POST'])
 def my_form_post():
@@ -23,7 +57,8 @@ def my_form_post():
         file.close()
     with open("Output.json", "w") as file:
         json_data = convert_text_to_json(file_content)
-        file.write(json_data)
+        json_data = templateJsonToPathJson(json_data)
+        file.write(str(json_data))
     jsonToProject(str(json_data))
 
     return "PROCESSED"
