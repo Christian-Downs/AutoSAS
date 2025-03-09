@@ -1,169 +1,85 @@
-Here's a simple Flask project that allows users to input their information and stores it locally in a JSON file. Below you'll find the file structure, code for each file, and a README.md to guide you through the project.
+Here’s a simple project structure for a "Hello World" application using Flask. Below are the necessary files and their contents.
 
 ### File Structure
 ```
-flask_user_info/
+flask_hello_world/
 │
-├── app.py
-├── user_data.json
+├── main.py
 ├── templates/
-│   ├── index.html
-│   └── success.html
+│   └── index.html
 └── README.md
 ```
 
-### File Codes
-
-#### 1. `app.py`
+### File: `main.py`
 ```python
-from flask import Flask, render_template, request, redirect, url_for
-import json
-import os
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
-# File to store user data
-DATA_FILE = 'user_data.json'
-
-# Initialize user data file if it doesn't exist
-if not os.path.exists(DATA_FILE):
-    with open(DATA_FILE, 'w') as f:
-        json.dump([], f)
-
 @app.route('/')
-def home():
+def hello_world():
     return render_template('index.html')
-
-@app.route('/submit', methods=['POST'])
-def submit():
-    if request.method == 'POST':
-        user_info = {
-            'name': request.form['name'],
-            'email': request.form['email'],
-            'age': request.form['age']
-        }
-        
-        # Load existing data
-        with open(DATA_FILE, 'r') as f:
-            data = json.load(f)
-
-        # Append new user data
-        data.append(user_info)
-
-        # Save updated data back to file
-        with open(DATA_FILE, 'w') as f:
-            json.dump(data, f)
-
-        return redirect(url_for('success'))
-
-@app.route('/success')
-def success():
-    return render_template('success.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
 ```
 
-#### 2. `templates/index.html`
+### File: `templates/index.html`
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Info Form</title>
+    <title>Hello World</title>
 </head>
 <body>
-    <h1>Enter Your Information</h1>
-    <form action="/submit" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
-        
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required><br><br>
-        
-        <input type="submit" value="Submit">
-    </form>
+    <h1>Hello, World!</h1>
 </body>
 </html>
 ```
 
-#### 3. `templates/success.html`
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Success</title>
-</head>
-<body>
-    <h1>Information Submitted Successfully!</h1>
-    <a href="/">Go Back</a>
-</body>
-</html>
-```
-
-#### 4. `user_data.json`
-```json
-[]
-```
-
-#### 5. `README.md`
+### File: `README.md`
 ```markdown
-# User Info Flask App
+# Flask Hello World Application
 
-This is a simple Flask application that allows users to input their information and stores it locally in a JSON file.
+This is a simple Flask application that displays "Hello, World!" in the browser.
 
 ## Project Structure
 
 ```
-flask_user_info/
+flask_hello_world/
 │
-├── app.py             # Main application code
-├── user_data.json     # Stores user information
-├── templates/         # Contains HTML templates
-│   ├── index.html     # Form for user input
-│   └── success.html   # Success page after form submission
-└── README.md          # Project documentation
+├── main.py         # Main application file
+├── templates/      # Folder for HTML templates
+│   └── index.html  # HTML file to render
+└── README.md       # Project documentation
 ```
 
 ## Requirements
 
-- Python (>= 3.6)
+- Python 3.x
 - Flask
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd flask_user_info
-   ```
+1. Clone the repository or download the files.
+2. Navigate to the project directory.
+3. Install Flask using pip:
 
-2. Install Flask:
-   ```bash
+   ```
    pip install Flask
    ```
 
 ## Running the Application
 
-1. Run the Flask application:
-   ```bash
-   python app.py
-   ```
+To run the application, execute the following command in your terminal:
 
-2. Open your browser and navigate to `http://127.0.0.1:5000/`.
-
-## Features
-
-- User input form with fields for name, email, and age.
-- Data is stored locally in a JSON file.
-- Success page displayed after form submission.
+```
+python main.py
 ```
 
-### Summary
-This project is a basic web application that allows users to submit their personal information, which is then stored in a JSON file. You can expand this project further to include features such as data retrieval, editing, and deletion.
+Open your web browser and visit `http://127.0.0.1:5000/` to see the "Hello, World!" message.
+``` 
+
+This structure sets up a basic Flask application that serves a "Hello, World!" message.
