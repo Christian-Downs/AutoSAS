@@ -68,10 +68,15 @@ def convert_text_to_json(input_text: str) -> dict:
             insideCode = True
             jsonString += "\"" + filepath + "\"" + ":\""
             continue
+        if (line.strip() == "```css") :
+            insideCode = True
+            jsonString += "\"" + filepath + "\"" + ":\""
+            continue
         if (line.strip() == "```markdown") :
             insideCode = True
             jsonString += "\"" + filepath + "\"" + ":\""
             continue
+
 
         splitLines = line.strip().split()
         if not insideCode and len(splitLines) == 2 :
