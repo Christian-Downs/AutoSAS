@@ -1,0 +1,22 @@
+first prompt : ---------------------------------------------
+# Description:
+< insert prompt from user >
+
+# Instructions:
+Provide all the separate source files for a fully functional website, such as README.md, index.html, stylesheets, python files, etc. Include backend, frontend, stylesheets, and all other relevant files.
+
+
+
+second prompt: ---------------------------------------------
+
+That looks great. Can you reformat the file structure and content into a single json file? In the json, values should correspond to filenames in the form "path/to/file.extension", and each file's content should be stored in the corresponding values.
+
+# Example:
+output.json
+{
+    "example_app/README.md": "# My title\nThis simple web application allows users to...",
+    "example_app/main.py": "from Flask import flask...",
+    "example_app/templates/index.html": "<!DOCTYPE html><html>...",
+    "example_app/style.css": "body {\nbackground-color:...",
+    ...
+}
