@@ -84,7 +84,6 @@ def convert_text_to_json(input_text: str) -> dict:
                 filenameIndex = len(splitLines) - 1
                 lastChar = splitLines[filenameIndex][-1]
                 while splitLines[filenameIndex] != "`" and splitLines[filenameIndex] != "*" and (lastChar == "`" or lastChar == "*") :
-                    print("the output is")
                     print (splitLines[filenameIndex][:-1])
                     splitLines[filenameIndex] = splitLines[filenameIndex][:-1]
                     lastChar = splitLines[filenameIndex][-1]
