@@ -28,7 +28,9 @@ def file_updater(chat:str, fileLocation:str):
     
 
 def updater(error:str): 
-    file = pullFile(error)
-    file_updater(tester(file, error), file)
-
+    try:
+        file = pullFile(error)
+        file_updater(tester(file, error), file)
+    except Exception as ex:
+        print(ex)
 
