@@ -1,203 +1,169 @@
-Here's a simple Flask web application for storing employee information. Below is the file structure, code for each file, and a sample `README.md`.
+Here's a simple Flask project that allows users to input their information and stores it locally in a JSON file. Below you'll find the file structure, code for each file, and a README.md to guide you through the project.
 
 ### File Structure
-
 ```
-employee_info/
+flask_user_info/
 │
-├── app/
-│   ├── __init__.py
-│   ├── routes.py
-│   ├── models.py
-│   └── templates/
-│       ├── index.html
-│       └── employee_form.html
-│
-├── main.py
+├── app.py
+├── user_data.json
+├── templates/
+│   ├── index.html
+│   └── success.html
 └── README.md
 ```
 
-### Code Files
+### File Codes
 
-#### 1. `main.py`
-
+#### 1. `app.py`
 ```python
-from app import create_app
+from flask import Flask, render_template, request, redirect, url_for
+import json
+import os
 
-app = create_app()
+app = Flask(__name__)
+
+# File to store user data
+DATA_FILE = 'user_data.json'
+
+# Initialize user data file if it doesn't exist
+if not os.path.exists(DATA_FILE):
+    with open(DATA_FILE, 'w') as f:
+        json.dump([], f)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    if request.method == 'POST':
+        user_info = {
+            'name': request.form['name'],
+            'email': request.form['email'],
+            'age': request.form['age']
+        }
+        
+        # Load existing data
+        with open(DATA_FILE, 'r') as f:
+            data = json.load(f)
+
+        # Append new user data
+        data.append(user_info)
+
+        # Save updated data back to file
+        with open(DATA_FILE, 'w') as f:
+            json.dump(data, f)
+
+        return redirect(url_for('success'))
+
+@app.route('/success')
+def success():
+    return render_template('success.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
 ```
 
-#### 2. `app/__init__.py`
-
-```python
-from flask import Flask
-from .routes import main
-
-def create_app():
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///employees.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    with app.app_context():
-        from .models import db
-        db.init_app(app)
-        db.create_all()
-
-    app.register_blueprint(main)
-    return app
-```
-
-#### 3. `app/models.py`
-
-```python
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
-
-class Employee(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    position = db.Column(db.String(100), nullable=False)
-    salary = db.Column(db.Float, nullable=False)
-
-    def __repr__(self):
-        return f'<Employee {self.name}>'
-```
-
-#### 4. `app/routes.py`
-
-```python
-from flask import Blueprint, render_template, request, redirect, url_for
-from .models import db, Employee
-
-main = Blueprint('main', __name__)
-
-@main.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        name = request.form['name']
-        position = request.form['position']
-        salary = request.form['salary']
+#### 2. `templates/index.html`
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info Form</title>
+</head>
+<body>
+    <h1>Enter Your Information</h1>
+    <form action="/submit" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
         
-        new_employee = Employee(name=name, position=position, salary=salary)
-        db.session.add(new_employee)
-        db.session.commit()
-        return redirect(url_for('main.index'))
-    
-    employees = Employee.query.all()
-    return render_template('index.html', employees=employees)
-
-@main.route('/add')
-def add_employee():
-    return render_template('employee_form.html')
-```
-
-#### 5. `app/templates/index.html`
-
-```html
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Info</title>
-</head>
-<body>
-    <h1>Employee List</h1>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Position</th>
-            <th>Salary</th>
-        </tr>
-        {% for employee in employees %}
-        <tr>
-            <td>{{ employee.name }}</td>
-            <td>{{ employee.position }}</td>
-            <td>{{ employee.salary }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    <a href="/add">Add Employee</a>
-</body>
-</html>
-```
-
-#### 6. `app/templates/employee_form.html`
-
-```html
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Employee</title>
-</head>
-<body>
-    <h1>Add Employee</h1>
-    <form method="post" action="/">
-        <label>Name: </label>
-        <input type="text" name="name" required>
-        <label>Position: </label>
-        <input type="text" name="position" required>
-        <label>Salary: </label>
-        <input type="number" step="0.01" name="salary" required>
-        <button type="submit">Add Employee</button>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+        
+        <input type="submit" value="Submit">
     </form>
-    <a href="/">Back to Employee List</a>
 </body>
 </html>
 ```
 
-#### 7. `README.md`
+#### 3. `templates/success.html`
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success</title>
+</head>
+<body>
+    <h1>Information Submitted Successfully!</h1>
+    <a href="/">Go Back</a>
+</body>
+</html>
+```
 
+#### 4. `user_data.json`
+```json
+[]
+```
+
+#### 5. `README.md`
 ```markdown
-# Employee Info Flask App
+# User Info Flask App
 
-This is a simple Flask web application to store and manage employee information.
+This is a simple Flask application that allows users to input their information and stores it locally in a JSON file.
 
-## File Structure
+## Project Structure
 
 ```
-employee_info/
+flask_user_info/
 │
-├── app/
-│   ├── __init__.py
-│   ├── routes.py
-│   ├── models.py
-│   └── templates/
-│       ├── index.html
-│       └── employee_form.html
-│
-├── main.py
-└── README.md
+├── app.py             # Main application code
+├── user_data.json     # Stores user information
+├── templates/         # Contains HTML templates
+│   ├── index.html     # Form for user input
+│   └── success.html   # Success page after form submission
+└── README.md          # Project documentation
 ```
 
 ## Requirements
 
+- Python (>= 3.6)
 - Flask
-- Flask-SQLAlchemy
 
-## Setup
+## Installation
 
-1. Create a virtual environment and activate it.
-2. Install the required packages:
+1. Clone the repository:
    ```bash
-   pip install Flask Flask-SQLAlchemy
-   ```
-3. Run the application:
-   ```bash
-   python main.py
+   git clone <repository-url>
+   cd flask_user_info
    ```
 
-## Usage
+2. Install Flask:
+   ```bash
+   pip install Flask
+   ```
 
-- Navigate to `http://127.0.0.1:5000/` to view the employee list.
-- Click on "Add Employee" to add new employee information.
+## Running the Application
+
+1. Run the Flask application:
+   ```bash
+   python app.py
+   ```
+
+2. Open your browser and navigate to `http://127.0.0.1:5000/`.
+
+## Features
+
+- User input form with fields for name, email, and age.
+- Data is stored locally in a JSON file.
+- Success page displayed after form submission.
 ```
 
-### Note
-Make sure to adjust the Python environment and install the required packages before running the application.
+### Summary
+This project is a basic web application that allows users to submit their personal information, which is then stored in a JSON file. You can expand this project further to include features such as data retrieval, editing, and deletion.
