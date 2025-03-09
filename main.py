@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from aiTester import caller
 from fileNameParse import convert_text_to_json
 from jsonToProject import jsonToProject
+from test_code import tester
 import json
 
 app = Flask(__name__)
@@ -27,6 +28,8 @@ def my_form_post():
         file.write(str(json_data))
         #json_data = templateJsonToPathJson(str(json_data))
     jsonToProject(str(json_data))
+    
+    tester()
 
     return "PROCESSED"
 
