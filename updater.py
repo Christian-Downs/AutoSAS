@@ -3,8 +3,8 @@ from openai_test import tester
 def pullFile(error:str)->str:
     words = error.split(" ")
     file = ""
-    i = len(words)-1
-    while(i>=0):
+    i = 0
+    while(i<len(words)):
         print(words[i])
         if words[i] == "line":
             file = words[i-1]
@@ -14,7 +14,7 @@ def pullFile(error:str)->str:
             file = "output" + file
             return file
 
-        i-=1
+        i+=1
     return file
 
 def file_updater(chat:str, fileLocation:str):

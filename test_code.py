@@ -126,8 +126,9 @@ def tester():
             print(stderr)
 
         tries_counter += 1
-
+    return
     logging.error(f'Failed to run {python_source} after {max_tries} tries')
+    return
 
 if __name__ == '__main__':
     tester()

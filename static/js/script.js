@@ -7,7 +7,7 @@ $(document).ready(function(){
         $(".chat-box").css("min-height", this.scrollHeight + 20 + "px");
     });
 
-    $(".submit-button").click(function(){
+    $(".animated-button").click(function(){
         $(".chat-form").submit();
     });
 });

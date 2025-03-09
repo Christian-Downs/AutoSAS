@@ -5,6 +5,8 @@ from jsonToProject import jsonToProject
 import fileZipOutput
 from test_code import tester
 import json
+import shutil
+import os
 
 #Render webpage
 app = Flask(__name__)
@@ -13,13 +15,17 @@ app = Flask(__name__)
 
 @app.route('/')
 def my_form():
-    return render_template('my-form.html')
+    return render_template('main.html')
 
 #Send user input and execute code
 @app.route('/', methods=['POST'])
 def my_form_post():
+    output_folder = 'output'
+    if os.path.exists(output_folder):
+        shutil.rmtree(output_folder)
     # Example Usage:
-    text = request.form['text']
+    text = request.form.get('text')
+    print(request)
 
     #Send ChatGPT user prompt and store output input.txt
     caller(text)

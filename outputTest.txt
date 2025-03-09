@@ -1,8 +1,33 @@
-```python
-# Updated code for files/runner.py
-def main():
-    print("Hello, World!")
+Here is the updated code for your Flask application without any explanation:
 
-if __name__ == "__main__":
-    main()
+```python
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+
+# List to store people information
+people = []
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        age = request.form.get('age')
+        email = request.form.get('email')
+
+        # Append new person to the list
+        if name and age and email:
+            people.append({
+                'name': name,
+                'age': age,
+                'email': email
+            })
+            return redirect(url_for('index'))
+
+    return render_template('index.html', people=people)
+
+if __name__ == '__main__':
+    app.run(debug=True, use_reloader=False)
 ```
+
+Make sure your `index.html` template is correctly set up and located in the `templates` folder. Run the application and it should work without the 'Bad file descriptor' error.
