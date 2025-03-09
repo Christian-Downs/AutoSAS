@@ -32,9 +32,35 @@ def templateJsonToPathJson (badJson) :
     keys = list(badDict.keys())
     fileTemplate = "\"" + badDict[keys[0]] + "\""
 
-    fileJson = json.loads(fileTemplate)
-    fileList = list(fileJson.keys())    
+    goodJson = "{"
 
+    fileJson = json.loads(fileTemplate)
+    fileList = list(fileJson.keys())
+    folders = [""]
+    folderDepth = 0
+    for name in fileList : 
+        nameList = name.split()
+        if "." in name :
+            if (folderDepth > nameList - 1) :
+                while folderDepth > nameList- 1 :
+                    folderDepth -= 1
+                    folders.pop()
+            filepath = ""
+            for folder in folders :
+                filepath += folder + "/"
+            filepath += nameList.pop()            
+            
+            goodJson += "\"" + filepath + "\":" + "\"" + fileJson[name] + "\""
+        elif nameList.size() == 1:
+            continue
+        else :
+            folders.append(nameList.pop())
+            folderDepth += 1
+    goodJson += "}"
+    print(goodJson)
+    return goodJson
+        
+"""
 {'employee_app': {'': None},
  '│': None,
  '├── main.py': None,
@@ -43,7 +69,7 @@ def templateJsonToPathJson (badJson) :
  '│   └── employee_list.html': None,
  '└── README.md': None
 }
-    
+"""
 
 @app.route('/', methods=['POST'])
 def my_form_post():
@@ -57,7 +83,8 @@ def my_form_post():
         file.close()
     with open("Output.json", "w") as file:
         json_data = convert_text_to_json(file_content)
-        json_data = templateJsonToPathJson(json_data)
+        print(json_data)
+        json_data = templateJsonToPathJson(str(json_data))
         file.write(str(json_data))
     jsonToProject(str(json_data))
 
