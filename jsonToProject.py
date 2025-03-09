@@ -11,16 +11,34 @@ def safeOpen (path, openType) :
     os.makedirs(os.path.dirname(path), exist_ok = True)
     return open(path, openType)
 
+def writeFile(filepath, fileContent) :
+    with safeOpen(filepath, 'w') as file:
+        file.write(fileContent)
+
+# takes the directory dir which is the key and json which contains info about items in the dir which is the value
+def recursiveWriteFile(dir, json) :
+    for fileOrDir in json :
+        value = json[fileOrDir]
+        if (type(value) is str) :
+            writeFile("output/" + dir + "/" + fileOrDir, value)
+        else :
+            recursiveWriteFile(dir + "/" + fileOrDir, value)
+
 def jsonToProject (nameAndContent): 
     try :
         if (any(os.scandir("output"))) :
             renameOutputFolder("output", 1) # rename output folder to save previous websites, also "deletes" the output folder
     except Exception as e:
         pass
+
+
     nameAndContentObject = json.loads(nameAndContent)
-    for filepath in nameAndContentObject :
-        with safeOpen("output/" + filepath, 'w') as file:
-            file.write(nameAndContentObject[filepath])
+    for fileOrDir in nameAndContentObject :
+        value = nameAndContentObject[fileOrDir]
+        if (type(value) is str) :
+            writeFile("output/" + fileOrDir, value)
+        else :
+            recursiveWriteFile(fileOrDir, value)
 
 # key is filename or the folder name
 # value is file contents if it is a string
