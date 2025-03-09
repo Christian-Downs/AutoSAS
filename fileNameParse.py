@@ -2,64 +2,60 @@ import json
 import re
 
 
-#This function converts an AI response into corresponding json file
-def convert_text_to_json(input_text: str) -> str:
+def convert_text_to_json(input_text: str) -> dict:
+    result = {"file_structure": {}}
 
-    # method uses regex to match certain patterns in output
-    result = {}
-    
-    # Match the file structure header
-    file_structure_match = re.search(r'File Structure\s*([\s\S]+?)\s*main.py', input_text)
+    # Extract the file structure
+    file_structure_match = re.search(r'### File Structure\s*```([\s\S]+?)```', input_text)
     if file_structure_match:
         file_structure_raw = file_structure_match.group(1).strip()
-        file_structure = {}
-        
-        # Process file structure
-        for line in file_structure_raw.split('\n'):
-            line = line.strip()
-            if line:
-                parts = line.split(' ', 1)
-                if len(parts) == 2:
-                    file_structure[parts[0]] = parts[1]
-        result['file_structure'] = file_structure
-    
-    # Extract Python script content
-    python_code_match = re.search(r'### main.py\n```python\n([\s\S]+?)```', input_text)
-    if python_code_match:
-        result['main.py'] = python_code_match.group(1).strip()
-    
-    # Extract HTML content
-    templates = {}
-    html_files = re.findall(r'### templates/([a-zA-Z0-9_\-]+.html)\n```html\n([\s\S]+?)```', input_text)
-    for file_name, file_content in html_files:
-        templates[file_name] = file_content.strip()
-    if templates:
-        result['templates'] = templates
-    
-    # Extract static file content
-    static_files = re.findall(r'### static/([a-zA-Z0-9_\-]+.css)\n```css\n([\s\S]+?)```', input_text)
-    static = {}
-    for file_name, file_content in static_files:
-        static[file_name] = file_content.strip()
-    if static:
-        result['static'] = static
-    
-    # Extract README content
-    readme_match = re.search(r'### README.md\n```markdown\n([\s\S]+?)```', input_text)
-    if readme_match:
-        result['README.md'] = readme_match.group(1).strip()
+        file_hierarchy = {}
 
-    # Convert the result dictionary to JSON string
-    json_output = json.dumps(result, indent=4)
 
-    return json_output
+        for line in file_structure_raw.split("\n"):
+            line = line.strip().replace("│", "").replace("├──", "").replace("└──", "").strip()
+            if not line:
+                continue
 
-def save_json_to_file(json_data: str, filename: str):
-    with open(filename, 'w') as f:
-        f.write(json_data)
+            parts = line.split("/")
+            current_level = file_hierarchy
+            for i, part in enumerate(parts):
+                if i == len(parts) - 1:  # Last part is a file
+                    current_level[part] = None  # Use None to indicate empty files
+                else:  # Create folder if it doesn't exist
+                    if part not in current_level:
+                        current_level[part] = {}
+                    current_level = current_level[part]
 
-# Example Usage:
-file_path = 'input.txt'
-with open(file_path, 'r') as file:
-    file_content = file.read()
-print(convert_text_to_json(file_content))
+        result["file_structure"] = file_hierarchy
+
+    # Function to navigate and insert content into the correct folder
+    def insert_into_structure(path: str, content: str):
+        parts = path.split("/")
+        current_level = result["file_structure"]
+        for i, part in enumerate(parts):
+            if part not in current_level:
+                current_level[part] = {} if i < len(parts) - 1 else content
+            current_level = current_level[part] if isinstance(current_level[part], dict) else current_level
+
+    # Extract all code blocks
+    code_blocks = re.findall(r'### `([^`]+)`\n```[a-zA-Z0-9]+\n([\s\S]+?)```', input_text)
+    for file_path, file_content in code_blocks:
+        insert_into_structure(file_path, file_content.strip())
+
+    return result
+
+
+def save_json_to_file(json_data: dict, filename: str):
+    with open(filename, "w") as f:
+        json.dump(json_data, f, indent=4)
+
+
+if __name__ == "__main__":
+    with open("input.txt", "r") as file:
+        input_text = file.read()
+
+    json_output = convert_text_to_json(input_text)
+    save_json_to_file(json_output, "Output.json")
+
+    print("JSON structure saved to Output.json")

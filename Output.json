@@ -1,0 +1,18 @@
+{
+    "file_structure": {
+        "employee_management": {
+            "": null
+        },
+        "main.py": null,
+        "templates": {
+            "": null
+        },
+        "index.html": null,
+        "add_employee.html": null,
+        "employee_list.html": null,
+        "static": {
+            "": null
+        },
+        "style.css": null
+    }
+}
