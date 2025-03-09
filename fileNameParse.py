@@ -52,6 +52,44 @@ def old_convert_text_to_json(input_text: str) -> dict:
 
     return json_output
 
+
+def christian_convert_to_text_to_json(input_text:str) -> dict:
+    structure = ""
+    start = input_text.find("```")+3
+    input_text = input_text[start:]
+    end = input_text.find("```")
+    structure = input_text[:end]
+    input_text = input_text[end+3:]
+    structure = structure.replace('\\n', '\n')
+    structure = f'{structure}'
+    print(structure)
+
+    structure = structure.splitlines()
+
+    file_names = []
+
+    for file in structure:
+        file = file
+
+
+    reading = False
+    type = ""
+    index = 0
+    while (input_text.find("```")):
+        if reading == False:
+            reading = True
+            index = input_text.find("```"  )+3
+            input_text = input_text[index:]
+            type_end = input_text.find("\n")
+            type = input_text[:type_end]
+
+            input_text = input_text[type_end:]
+            
+    pass
+
+    
+
+
 def convert_text_to_json(input_text: str) -> dict:
     lines = input_text.split("\n")
     insideCode = False
@@ -96,7 +134,7 @@ if __name__ == "__main__":
     with open("input.txt", "r") as file:
         input_text = file.read()
 
-    json_output = convert_text_to_json(input_text)
+    json_output = christian_convert_to_text_to_json(input_text)
     save_json_to_file(json_output, "Output.json")
 
     print("JSON structure saved to Output.json")
