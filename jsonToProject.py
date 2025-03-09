@@ -17,10 +17,13 @@ def jsonToProject (nameAndContent):
             renameOutputFolder("output", 1) # rename output folder to save previous websites, also "deletes" the output folder
     except Exception as e:
         pass
-    nameAndContentObject = json.loads(nameAndContent)
+    nameAndContentObject = json.loads(nameAndContent, strict=False)
     for filepath in nameAndContentObject :
         with safeOpen("output/" + filepath, 'w') as file:
-            file.write(nameAndContentObject[filepath])
+            rawContent = nameAndContentObject[filepath]
+            cleanContent = rawContent.replace("\\\"", "\"")
+            file.write(cleanContent)
+
 
 # key is filename or the folder name
 # value is file contents if it is a string
@@ -62,10 +65,10 @@ def jsonFromResponse (response) :
 
 # jsonToProject(" {\"newFolder/file1\" : \"file1 contents\" , \"file2\" : \"file2 contents\"} ")
 
-print(jsonFromResponse(" {\"newFolder\\file1\" : \"file1 {} contents\" , \"file2\" : \"file2 contents\"} "))
+# print(jsonFromResponse(" {\"newFolder\\file1\" : \"file1 {} contents\" , \"file2\" : \"file2 contents\"} "))
 
 
-jsonToProject("{\"folder1/folder2/folder3/file1\" : \"file1 content\", \"folder1/folder1/file2\": \"file2 contents\", \"folder1/folder1/file3\" : \"file contents\"}")
+# jsonToProject("{\"folder1/folder2/folder3/file1\" : \"file1 content\", \"folder1/folder1/file2\": \"file2 contents\", \"folder1/folder1/file3\" : \"file contents\"}")
 
 # test cases
 # subfiles of subfiles

@@ -1,194 +1,203 @@
-
-
----------Chat Reponse-----------Here's a simple Flask application to create and store employee information with the requested file structure, file code, and `README.md`.
+Here's a simple Flask web application for storing employee information. Below is the file structure, code for each file, and a sample `README.md`.
 
 ### File Structure
 
 ```
-employee_management/
+employee_info/
+│
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── models.py
+│   └── templates/
+│       ├── index.html
+│       └── employee_form.html
 │
 ├── main.py
-├── templates/
-│   ├── index.html
-│   ├── add_employee.html
-│   └── employee_list.html
-└── static/
-    └── style.css
+└── README.md
 ```
 
-### `main.py`
+### Code Files
+
+#### 1. `main.py`
 
 ```python
-from flask import Flask, render_template, request, redirect, url_for, flash
+from app import create_app
+
+app = create_app()
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+#### 2. `app/__init__.py`
+
+```python
+from flask import Flask
+from .routes import main
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///employees.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    with app.app_context():
+        from .models import db
+        db.init_app(app)
+        db.create_all()
+
+    app.register_blueprint(main)
+    return app
+```
+
+#### 3. `app/models.py`
+
+```python
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///employees.db'
-app.config['SECRET_KEY'] = 'your_secret_key'
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 class Employee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     position = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    salary = db.Column(db.Float, nullable=False)
 
-@app.route('/')
+    def __repr__(self):
+        return f'<Employee {self.name}>'
+```
+
+#### 4. `app/routes.py`
+
+```python
+from flask import Blueprint, render_template, request, redirect, url_for
+from .models import db, Employee
+
+main = Blueprint('main', __name__)
+
+@main.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
-
-@app.route('/add', methods=['GET', 'POST'])
-def add_employee():
     if request.method == 'POST':
         name = request.form['name']
         position = request.form['position']
-        email = request.form['email']
-
-        new_employee = Employee(name=name, position=position, email=email)
+        salary = request.form['salary']
+        
+        new_employee = Employee(name=name, position=position, salary=salary)
         db.session.add(new_employee)
         db.session.commit()
-        flash('Employee added successfully!', 'success')
-        return redirect(url_for('employee_list'))
+        return redirect(url_for('main.index'))
     
-    return render_template('add_employee.html')
-
-@app.route('/employees')
-def employee_list():
     employees = Employee.query.all()
-    return render_template('employee_list.html', employees=employees)
+    return render_template('index.html', employees=employees)
 
-if __name__ == '__main__':
-    db.create_all()
-    app.run(debug=True)
+@main.route('/add')
+def add_employee():
+    return render_template('employee_form.html')
 ```
 
-### `templates/index.html`
+#### 5. `app/templates/index.html`
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Employee Management</title>
-</head>
-<body>
-    <h1>Welcome to Employee Management System</h1>
-    <a href="{{ url_for('add_employee') }}">Add New Employee</a>
-    <a href="{{ url_for('employee_list') }}">View Employees</a>
-</body>
-</html>
-```
-
-### `templates/add_employee.html`
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Add Employee</title>
-</head>
-<body>
-    <h1>Add New Employee</h1>
-    <form method="POST">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="position" placeholder="Position" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <button type="submit">Add Employee</button>
-    </form>
-    <a href="{{ url_for('index') }}">Back</a>
-</body>
-</html>
-```
-
-### `templates/employee_list.html`
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Employee List</title>
+    <title>Employee Info</title>
 </head>
 <body>
     <h1>Employee List</h1>
-    <ul>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Salary</th>
+        </tr>
         {% for employee in employees %}
-            <li>{{ employee.name }} - {{ employee.position }} - {{ employee.email }}</li>
+        <tr>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.position }}</td>
+            <td>{{ employee.salary }}</td>
+        </tr>
         {% endfor %}
-    </ul>
-    <a href="{{ url_for('index') }}">Back</a>
+    </table>
+    <a href="/add">Add Employee</a>
 </body>
 </html>
 ```
 
-### `static/style.css`
+#### 6. `app/templates/employee_form.html`
 
-```css
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-}
-
-h1 {
-    color: #333;
-}
-
-a {
-    display: block;
-    margin: 10px 0;
-}
+```html
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employee</title>
+</head>
+<body>
+    <h1>Add Employee</h1>
+    <form method="post" action="/">
+        <label>Name: </label>
+        <input type="text" name="name" required>
+        <label>Position: </label>
+        <input type="text" name="position" required>
+        <label>Salary: </label>
+        <input type="number" step="0.01" name="salary" required>
+        <button type="submit">Add Employee</button>
+    </form>
+    <a href="/">Back to Employee List</a>
+</body>
+</html>
 ```
 
-### `README.md`
+#### 7. `README.md`
 
 ```markdown
-# Employee Management System
+# Employee Info Flask App
 
-This is a simple web application built with Flask to manage employee information.
+This is a simple Flask web application to store and manage employee information.
 
-## Features
+## File Structure
 
-- Add new employees with their name, position, and email.
-- View a list of all employees.
+```
+employee_info/
+│
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── models.py
+│   └── templates/
+│       ├── index.html
+│       └── employee_form.html
+│
+├── main.py
+└── README.md
+```
 
-## Installation
+## Requirements
 
-1. Clone the repository:
-   ```
-   git clone <repository_url>
-   cd employee_management
-   ```
+- Flask
+- Flask-SQLAlchemy
 
-2. Create a virtual environment and activate it:
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
+## Setup
 
-3. Install the required packages:
-   ```
+1. Create a virtual environment and activate it.
+2. Install the required packages:
+   ```bash
    pip install Flask Flask-SQLAlchemy
    ```
-
-4. Run the application:
-   ```
+3. Run the application:
+   ```bash
    python main.py
    ```
 
-5. Open a web browser and navigate to `http://127.0.0.1:5000/`.
+## Usage
 
-## Note
-
-Ensure you have the necessary permissions to create a database file in the directory where this application is run. The application uses SQLite for data storage.
-
+- Navigate to `http://127.0.0.1:5000/` to view the employee list.
+- Click on "Add Employee" to add new employee information.
 ```
 
-This structure and code will help you set up a basic employee management website using Flask.
------------End of reponse-----------
+### Note
+Make sure to adjust the Python environment and install the required packages before running the application.
