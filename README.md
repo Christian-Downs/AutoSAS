@@ -6,10 +6,10 @@ This project requires the following Python packages:
 
 - Flask
 
-You can install these dependencies using the `requirements.txt` file: <cod>pip install -r requirements.txt</code>
+You can install these dependencies using the `requirements.txt` file: <code>pip install -r requirements.txt</code>
 
 ### Usage 
-Run <code>python</code> main.py and connect to oputted server. Enter website idea into textbox. Website will give you zip file for you to download. 
+Run <code>python main.py</code> and connect to oputted server. Enter website idea into textbox. Website will give you zip file for you to download. 
 
 ### Overview
 
