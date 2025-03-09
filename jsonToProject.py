@@ -65,10 +65,10 @@ def jsonFromResponse (response) :
 
 # jsonToProject(" {\"newFolder/file1\" : \"file1 contents\" , \"file2\" : \"file2 contents\"} ")
 
-print(jsonFromResponse(" {\"newFolder\\file1\" : \"file1 {} contents\" , \"file2\" : \"file2 contents\"} "))
+# print(jsonFromResponse(" {\"newFolder\\file1\" : \"file1 {} contents\" , \"file2\" : \"file2 contents\"} "))
 
 
-jsonToProject("{\"folder1/folder2/folder3/file1\" : \"file1 content\", \"folder1/folder1/file2\": \"file2 contents\", \"folder1/folder1/file3\" : \"file contents\"}")
+# jsonToProject("{\"folder1/folder2/folder3/file1\" : \"file1 content\", \"folder1/folder1/file2\": \"file2 contents\", \"folder1/folder1/file3\" : \"file contents\"}")
 
 # test cases
 # subfiles of subfiles
