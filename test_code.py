@@ -4,16 +4,15 @@ import logging
 import subprocess
 import re
 from updater import updater
+from flask_logger import get_logger  # Import the function from logging.py
 
 # read config file with 'General' section
 config = ConfigParser()
 config.read('config.ini')
 
-# Set up logging from config
-level = config.get('General', 'log_level')
-log_format = "%(levelname).4s | %(asctime)s | %(message)s"
-logging.basicConfig(level=level, format=log_format, datefmt="%H:%M:%S")
+port = config.get('General', 'port', fallback='5000')
 
+logging = get_logger(flask_url=f"http://127.0.0.1:{port}/set_logging")  # Get the configured logger
 
 def find_files(root_dir, filename):
     """
