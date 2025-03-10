@@ -48,12 +48,12 @@ def modify_traceback(tb, project_root):
 
 
 def tester():
-    tries_counter = 0
+    timeout = int(config.get('Generation', 'timeout', fallback='5'))
     max_tries = int(config.get('Generation', 'num_tries'))
-
     output_dir = config.get('Generation', 'output_dir')
-
     py_source_files = config.get('Generation', 'py_source_files').split(',')
+
+    tries_counter = 0
 
     while tries_counter < max_tries:
         python_source = ""
@@ -87,9 +87,20 @@ def tester():
         # run the python source file
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+        # since we're running a server, it will run indefinitely
+        # if it still hasn't thrown errors after 5 seconds, terminate it
+        try:
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            logging.warning(f'Terminating {python_source} after {timeout} seconds...')
+            process.terminate()
+            process.wait()
+
         stdout, stderr = [s.decode() for s in process.communicate()]
         stdout = stdout.strip()
         stderr = modify_traceback(stderr.strip(), output_dir)
+
+        print(stderr)
 
         if process.returncode == 0:
             logging.info(f'{python_source} ran successfully')
@@ -97,37 +108,18 @@ def tester():
         # check if errors...
         else:
             logging.warning(f'Error running {python_source}')
-            updater(stderr.strip())
-            return
-            # Extract the last line (error type and message)
-            error_lines = stderr.strip().split("\n")
-            error_message = error_lines[-1]  # The last line contains the error
-
-            # Extract line number using regex
-            match = re.search(r'line (\d+)', stderr)
-            line_number = int(match.group(1)) if match else None
-
-            # Extract error name using regex
-            error_match = re.match(r'(\w+Error)', error_message)
-            error_name = error_match.group(1) if error_match else None
-
-            logging.info(f"{error_name} at line {line_number}")
-            output = {
-                "line": line_number,
-                "error_name": error_name
-            }
-            # TODO: tell GPT to fix the error in the python_source file
+            # Tell GPT to fix the error in the python_source file
             # stdout is the output of the program
             # stdderr has the entire error output
             # error_name is the name of the error
             # line_number is the line number that caused the error
             # error_message is the error message (last line of stderr)
-            print(stderr)
+            updater(stderr.strip())
 
-        tries_counter += 1
-    return
+            tries_counter += 1
+
     logging.error(f'Failed to run {python_source} after {max_tries} tries')
-    return
+    return False
 
 if __name__ == '__main__':
     tester()
