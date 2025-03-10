@@ -1,3 +1,4 @@
 Flask==3.1.0
-openai==1.65.4
+openai==1.65.5
+Requests==2.32.3
 Werkzeug==3.1.3

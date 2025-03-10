@@ -1,8 +1,8 @@
-Here’s a simple project structure for a "Hello World" application using Flask. Below are the necessary files and their contents.
+Here's a simple Flask web application structure with the required files and code:
 
 ### File Structure
 ```
-flask_hello_world/
+flask_app/
 │
 ├── main.py
 ├── templates/
@@ -10,76 +10,52 @@ flask_hello_world/
 └── README.md
 ```
 
-### File: `main.py`
+### main.py
 ```python
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
+def home():
     return render_template('index.html')
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
 ```
 
-### File: `templates/index.html`
+### templates/index.html
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Hello Flask</title>
 </head>
 <body>
-    <h1>Hello, World!</h1>
+    <h1>Hello, Flask!</h1>
 </body>
 </html>
 ```
 
-### File: `README.md`
+### README.md
 ```markdown
-# Flask Hello World Application
+# Flask Web Application
 
-This is a simple Flask application that displays "Hello, World!" in the browser.
+This is a simple web application built using Python Flask.
 
-## Project Structure
+## File Structure
 
-```
-flask_hello_world/
-│
-├── main.py         # Main application file
-├── templates/      # Folder for HTML templates
-│   └── index.html  # HTML file to render
-└── README.md       # Project documentation
-```
+- `main.py`: The main application file.
+- `templates/`: Directory containing HTML templates.
+  - `index.html`: The main HTML page.
 
-## Requirements
+## How to Run
 
-- Python 3.x
-- Flask
-
-## Installation
-
-1. Clone the repository or download the files.
-2. Navigate to the project directory.
-3. Install Flask using pip:
-
-   ```
-   pip install Flask
-   ```
-
-## Running the Application
-
-To run the application, execute the following command in your terminal:
-
-```
-python main.py
+1. Ensure you have Flask installed.
+2. Run the application using `python main.py`.
+3. Open your browser and navigate to `http://127.0.0.1:5000/`.
 ```
 
-Open your web browser and visit `http://127.0.0.1:5000/` to see the "Hello, World!" message.
-``` 
-
-This structure sets up a basic Flask application that serves a "Hello, World!" message.
+This setup provides a very basic Flask web application that displays "Hello, Flask!" when accessed.

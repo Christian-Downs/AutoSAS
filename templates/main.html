@@ -43,9 +43,20 @@
       </div>
       <div class="row">
 
-        <p class="output-log">
-          [i] Website generated, try 1.<br />
-          [i] Website re-generated, try 2.
+        <script>
+          function updateParagraph() {
+              fetch('/update_logging')
+              .then(response => response.json())
+              .then(data => {
+                  document.querySelector('.logging').innerText = data.message;
+              });
+          }
+          
+          // Auto update every 5 seconds (optional)
+          setInterval(updateParagraph, 5000);
+      </script>
+        <p class="logging">
+          
         </p>
       </div>
     </div>
